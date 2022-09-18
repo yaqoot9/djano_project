@@ -45,5 +45,8 @@ def new_topic(request,pk):
 
 
 def update(request):
-    board=Board.objects.all().update( description='This is unavailable')
-    return render(request,'update.html',{'board':board})
+    board=Board.objects.all().update( description='This ....')
+    return redirect('home')
+    return render(request,'update.html',{'boards':board})
+
+
