@@ -6,6 +6,10 @@ from django.views import View
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views.decorators.http import require_http_methods
 
+from  rest_framework.views import  APIView
+from .serializers import  BoardSerializ
+from rest_framework.response import Response
+from rest_framework import status
 @require_http_methods(['GET'])
 def home(request):
     boards=Board.objects.all()
@@ -50,3 +54,16 @@ def update(request):
     return render(request,'update.html',{'boards':board})
 
 
+class BoardList(APIView):
+    def get(self,request):
+        board=Board.objects.all()
+        serialize= BoardSerializ(board,many=True)
+        return Response(serialize.data)
+
+    def post(self, request):
+        serializer = BoardSerializ(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
