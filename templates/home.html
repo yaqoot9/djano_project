@@ -6,8 +6,10 @@
 {% endblock %}
 
 {% block content %}
-<a class=""btn btn-primary href="{% url 'create_board' %}">Craete New Board</a>
+<a class=""btn btn-primary href="{% url 'create_board' %}">Craete New Board</a><br>
+<a class=""btn btn-primary href="{% url 'BoardCreate' %}">Craete REST API</a>
 
+<br>
   <table class="table">
     <thead class="thead-inverse">
       <tr>
@@ -27,8 +29,11 @@
           <td class="align-middle">0</td>
           <td class="align-middle">0</td>
           <td></td>
-          <td><a href="{%url 'Update_Board' board.id %}">Update</a></td>
-          <td><a href="{%url 'Delete_Board' board.id %}">Delete</a></td>
+          <td><a href="{%url 'Update_Board' board.id %}">Update</a><br>
+         <a href="{%url 'BoardUpdate' board.id %}">Update REST API</a> </td>
+          <td><a href="{%url 'Delete_Board' board.id %}">Delete</a><br>
+         <a href="{%url 'BoardDelete' board.id %}">Delete REST API</a>
+          </td>
         </tr>
       {% endfor %}
     </tbody>

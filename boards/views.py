@@ -5,6 +5,7 @@ from django.views import View
 # Create your views here.
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 
 from  rest_framework.views import  APIView
 from .serializers import  BoardSerializ
@@ -55,19 +56,43 @@ def update(request):
 
 
 
-class BoardList(APIView):
-    def get(self,request):
-        board=Board.objects.all()
-        serialize= BoardSerializ(board,many=True)
-        return Response(serialize.data)
+@api_view(['GET'])
+def boardList(request):
+     board=Board.objects.all()
+     serializer=BoardSerializ(board,many=True)
+     return Response(serializer.data)
 
-    def post(self, request):
-        serializer = BoardSerializ(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def boardCreate(request):
+    serializer=BoardSerializ(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response (serializer.data)
+
+@api_view(['POST'])
+def boardUpdate(request,pk):
+    board=Board.objects.get(id=pk)
+    serializer=BoardSerializ(instance=board,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response (serializer.data)
+
+@api_view(['delete'])
+def boardDelete(request,pk):
+    board=Board.objects.get(id=pk)
+    board.delete()
+    return Response ('Deleted!')
+
+
+
+
+
+
+
+
+
+
 
 
 def creat_board(request):
