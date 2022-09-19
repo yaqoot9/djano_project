@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block content %}
+<a class=""btn btn-primary href="{% url 'create_board' %}">Craete New Board</a>
+
   <table class="table">
     <thead class="thead-inverse">
       <tr>
@@ -25,6 +27,8 @@
           <td class="align-middle">0</td>
           <td class="align-middle">0</td>
           <td></td>
+          <td><a href="{%url 'Update_Board' board.id %}">Update</a></td>
+          <td><a href="{%url 'Delete_Board' board.id %}">Delete</a></td>
         </tr>
       {% endfor %}
     </tbody>

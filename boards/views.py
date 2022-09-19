@@ -10,6 +10,7 @@ from  rest_framework.views import  APIView
 from .serializers import  BoardSerializ
 from rest_framework.response import Response
 from rest_framework import status
+from .forms import BoardForm
 @require_http_methods(['GET'])
 def home(request):
     boards=Board.objects.all()
@@ -51,7 +52,7 @@ def new_topic(request,pk):
 def update(request):
     board=Board.objects.all().update( description='This ....')
     return redirect('home')
-    return render(request,'update.html',{'boards':board})
+
 
 
 class BoardList(APIView):
@@ -67,3 +68,38 @@ class BoardList(APIView):
             return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def creat_board(request):
+    form = BoardForm()
+    if request.method=='POST':
+        form = BoardForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context={'form':form}
+    return render(request,'new_board.html',context)
+
+def UpdateBoard(request,pk):
+    board=Board.objects.get(id=pk)
+    form = BoardForm(instance=board)
+    if request.method=='POST':
+        form = BoardForm(request.POST,instance=board)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context={'form':form}
+
+    return render(request, 'new_board.html', context)
+
+
+def DeleteBoard(request,pk):
+    board = Board.objects.get(id=pk)
+    if request.method=='POST':
+        board.delete()
+        return redirect('/')
+
+    context={'item':board}
+    return render(request,'delete.html',context)
