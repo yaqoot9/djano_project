@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block content %}
-<a class=""btn btn-primary href="{% url 'create_board' %}">Craete New Board</a><br>
-<a class=""btn btn-primary href="{% url 'BoardCreate' %}">Craete REST API</a>
+<button ><a class=""btn btn-primary href="{% url 'create_board' %}">Craete New Board</a></button><br><br>
+<button><a class=""btn btn-primary href="{% url 'BoardCreate' %}">Craete REST API</a></button>
 
 <br>
   <table class="table">
@@ -29,13 +29,16 @@
           <td class="align-middle">0</td>
           <td class="align-middle">0</td>
           <td></td>
-          <td><a href="{%url 'Update_Board' board.id %}">Update</a><br>
-         <a href="{%url 'BoardUpdate' board.id %}">Update REST API</a> </td>
-          <td><a href="{%url 'Delete_Board' board.id %}">Delete</a><br>
-         <a href="{%url 'BoardDelete' board.id %}">Delete REST API</a>
+          <td><button><a href="{%url 'Update_Board' board.id %}">Update</a></button><br><br>
+         <button><a href="{%url 'BoardUpdate' board.id %}">Update REST API</a></button ></td>
+          <td><button><a href="{%url 'Delete_Board' board.id %}">Delete</a></button><br><br>
+       <button>  <a href="{%url 'BoardDelete' board.id %}">Delete REST API</a></button>
           </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+
+<a href="{% url 'logout'%}">LOGOUT</a>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .models import  Board,Topic,Post
 from django.views import View
 # Create your views here.
-from django.shortcuts import render, get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404,redirect,HttpResponseRedirect,reverse
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 
@@ -12,6 +12,32 @@ from .serializers import  BoardSerializ
 from rest_framework.response import Response
 from rest_framework import status
 from .forms import BoardForm
+from django.contrib.auth import authenticate,login,logout
+
+
+def user_login(request):
+    context={}
+    if request.method=="POST":
+        username=request.POST['username']
+        password=request.POST['password']
+        user=authenticate(request,username=username,password=password)
+        if user:
+            login(request,user)
+            return HttpResponseRedirect(reverse('home'))
+
+        else:
+            context["error"]="provide valid credentials!"
+            return render(request, 'login.html', context)
+
+    else:
+        return render(request,'login.html',context)
+
+
+def user_logout(request):
+     logout(request)
+     context={}
+     return HttpResponseRedirect(reverse('login'))
+
 @require_http_methods(['GET'])
 def home(request):
     boards=Board.objects.all()
@@ -66,11 +92,15 @@ def boardList(request):
 @api_view(['POST'])
 def boardCreate(request):
     serializer=BoardSerializ(data=request.data)
+    serializer.validate_name(request.data['name'])
     if serializer.is_valid():
         serializer.save()
+
     return Response (serializer.data)
 
-@api_view(['POST'])
+
+
+@api_view(['PUT'])
 def boardUpdate(request,pk):
     board=Board.objects.get(id=pk)
     serializer=BoardSerializ(instance=board,data=request.data)
