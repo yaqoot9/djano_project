@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-
 from .models import  Board,Topic,Post
 from django.views import View
 # Create your views here.
@@ -13,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .forms import BoardForm
 from django.contrib.auth import authenticate,login,logout
+from rest_framework.permissions import IsAuthenticated
 
 
 def user_login(request):
@@ -35,9 +35,15 @@ def user_login(request):
 
 def user_logout(request):
      logout(request)
-     context={}
      return HttpResponseRedirect(reverse('login'))
 
+
+
+class HelloView(APIView):
+    permission_classes = (IsAuthenticated,)             # <-- And here
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        return Response(content)
 @require_http_methods(['GET'])
 def home(request):
     boards=Board.objects.all()
@@ -93,7 +99,7 @@ def boardList(request):
 def boardCreate(request):
     serializer=BoardSerializ(data=request.data)
     serializer.validate_name(request.data['name'])
-    if serializer.is_valid():
+    if serializer.is_valid(raise_exception=True):
         serializer.save()
 
     return Response (serializer.data)
@@ -110,7 +116,7 @@ def boardUpdate(request,pk):
 
 @api_view(['delete'])
 def boardDelete(request,pk):
-    board=Board.objects.get(id=pk)
+    board=Board.objects.filter(id=pk).first()
     board.delete()
     return Response ('Deleted!')
 
